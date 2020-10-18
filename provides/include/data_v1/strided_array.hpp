@@ -55,6 +55,8 @@ template <class Value> auto data_v1::strided_array<Value>::rbegin() const {
 }
 
 template <class Value> auto data_v1::strided_array<Value>::rend() const {
+  // WARNING: The following computes a pointer that potentially points outside
+  // of the underlying array.
   return strided_iterator<Value>(
       reinterpret_cast<Value *>(static_cast<char *>(this->m_pointer) -
                                 this->m_stride),
