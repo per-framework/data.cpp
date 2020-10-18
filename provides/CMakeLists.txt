@@ -1,1 +1,1 @@
-add_conventional_library(data_cpp_v1)
+add_conventional_library(data_v1)

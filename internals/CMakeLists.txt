@@ -1,1 +1,1 @@
-add_conventional_executable_tests(PRIVATE data_cpp_v1)
+add_conventional_executable_tests(PRIVATE data_v1 testing_v1)
