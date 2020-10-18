@@ -84,6 +84,6 @@ template <class Value> auto invert(const strided_array<Value> &array);
 // struct.hpp ==================================================================
 
 template <class Struct, class Value>
-Value *pointer_of(Value(Struct::*member), Struct *whole = nullptr);
+auto *pointer_of(Value(Struct::*member), Struct *whole = nullptr);
 
 } // namespace data_v1

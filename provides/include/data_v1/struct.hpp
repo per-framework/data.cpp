@@ -3,6 +3,6 @@
 #include "synopsis.hpp"
 
 template <class Struct, class Value>
-Value *data_v1::pointer_of(Value(Struct::*member), Struct *whole) {
+auto *data_v1::pointer_of(Value(Struct::*member), Struct *whole) {
   return &(whole->*member);
 }
