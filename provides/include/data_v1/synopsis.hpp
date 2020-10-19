@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 #include "data_v1/private.hpp"
 
 namespace data_v1 {
@@ -13,11 +15,13 @@ template <class Value, size_t N> auto end(Value (&array)[N]);
 
 // strided_iterator.hpp ========================================================
 
-template <class Value>
-struct strided_iterator : Private::strided_iterator<Value> {
+template <class Value, ptrdiff_t Stride = dynamic_stride>
+struct strided_iterator : Private::strided_iterator<Value, Stride> {
   using value_type = Value;
 
   strided_iterator(Value *begin, ptrdiff_t stride);
+
+  auto stride() const;
 
   auto &operator*() const;
 
@@ -27,35 +31,49 @@ struct strided_iterator : Private::strided_iterator<Value> {
   auto decrement();
 };
 
-template <class Value>
-auto operator==(const strided_iterator<Value> &lhs,
-                const strided_iterator<Value> &rhs);
+template <class Value, ptrdiff_t Stride>
+auto operator==(const strided_iterator<Value, Stride> &lhs,
+                const strided_iterator<Value, Stride> &rhs);
 
-template <class Value>
-auto operator!=(const strided_iterator<Value> &lhs,
-                const strided_iterator<Value> &rhs);
+template <class Value, ptrdiff_t Stride>
+auto operator!=(const strided_iterator<Value, Stride> &lhs,
+                const strided_iterator<Value, Stride> &rhs);
 
-template <class Value> auto &operator++(strided_iterator<Value> &i);
-template <class Value> auto &&operator++(strided_iterator<Value> &&i);
+template <class Value, ptrdiff_t Stride>
+auto &operator++(strided_iterator<Value, Stride> &i);
 
-template <class Value> auto operator++(strided_iterator<Value> &i, int);
+template <class Value, ptrdiff_t Stride>
+auto &&operator++(strided_iterator<Value, Stride> &&i);
 
-template <class Value> auto &operator--(strided_iterator<Value> &i);
-template <class Value> auto &&operator--(strided_iterator<Value> &&i);
+template <class Value, ptrdiff_t Stride>
+auto operator++(strided_iterator<Value, Stride> &i, int);
 
-template <class Value> auto operator--(strided_iterator<Value> &i, int);
+template <class Value, ptrdiff_t Stride>
+auto &operator--(strided_iterator<Value, Stride> &i);
+
+template <class Value, ptrdiff_t Stride>
+auto &&operator--(strided_iterator<Value, Stride> &&i);
+
+template <class Value, ptrdiff_t Stride>
+auto operator--(strided_iterator<Value, Stride> &i, int);
 
 // strided_array.hpp ===========================================================
 
-template <class Value> struct strided_array : Private::strided_array<Value> {
+template <class Value,
+          ptrdiff_t Stride = dynamic_stride,
+          size_t Size = dynamic_size>
+struct strided_array : Private::strided_array<Value, Stride, Size> {
   using value_type = Value;
   using iterator_type = strided_iterator<Value>;
 
   strided_array(Value *begin, ptrdiff_t stride, size_t count);
 
-  template <size_t N> explicit strided_array(Value (&array)[N]);
-
   strided_array(Value *begin, Value *end);
+
+  template <size_t ThatSize> strided_array(Value (&that)[ThatSize]);
+
+  template <ptrdiff_t ThatStride, size_t ThatSize>
+  strided_array(const strided_array<Value, ThatStride, ThatSize> &that);
 
   auto size() const;
   auto stride() const;
@@ -72,14 +90,19 @@ template <class Value> struct strided_array : Private::strided_array<Value> {
   auto &back() const;
 };
 
+template <class Value, size_t Size = dynamic_size>
+using contiguous_array = strided_array<Value, sizeof(Value), Size>;
+
 template <class Value, size_t N> auto make_strided_array(Value (&array)[N]);
 
 template <class Value> auto make_strided_array(Value *begin, Value *end);
 
-template <class Value, class Member>
-auto focus_on(Member(Value::*member), const strided_array<Value> &array);
+template <class Value, ptrdiff_t Stride, size_t Size, class Member>
+auto focus_on(Member(Value::*member),
+              const strided_array<Value, Stride, Size> &array);
 
-template <class Value> auto invert(const strided_array<Value> &array);
+template <class Value, ptrdiff_t Stride, size_t Size>
+auto reversed(const strided_array<Value, Stride, Size> &array);
 
 // struct.hpp ==================================================================
 
