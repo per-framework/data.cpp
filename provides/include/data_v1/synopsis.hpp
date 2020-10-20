@@ -61,7 +61,7 @@ auto operator--(strided_iterator<Value, Stride> &i, int);
 
 template <class Value,
           ptrdiff_t Stride = dynamic_stride,
-          size_t Size = dynamic_size>
+          size_t Size = dynamic_extent>
 struct strided_array : Private::strided_array<Value, Stride, Size> {
   using value_type = Value;
   using iterator_type = strided_iterator<Value>;
@@ -90,7 +90,7 @@ struct strided_array : Private::strided_array<Value, Stride, Size> {
   auto &back() const;
 };
 
-template <class Value, size_t Size = dynamic_size>
+template <class Value, size_t Size = dynamic_extent>
 using contiguous_array = strided_array<Value, sizeof(Value), Size>;
 
 template <class Value, size_t N> auto make_strided_array(Value (&array)[N]);

@@ -9,7 +9,7 @@ namespace data_v1 {
 inline constexpr ptrdiff_t dynamic_stride =
     std::numeric_limits<ptrdiff_t>::min();
 
-inline constexpr size_t dynamic_size = std::numeric_limits<size_t>::max();
+inline constexpr size_t dynamic_extent = std::numeric_limits<size_t>::max();
 
 template <class Value, ptrdiff_t Stride> struct strided_iterator;
 template <class Value, ptrdiff_t Stride, size_t Size> struct strided_array;
@@ -42,7 +42,7 @@ class Private {
     template <class, ptrdiff_t, size_t> friend struct data_v1::strided_array;
   };
 
-  template <class Base> class size_member<dynamic_size, Base> : Base {
+  template <class Base> class size_member<dynamic_extent, Base> : Base {
     template <class, ptrdiff_t> friend struct data_v1::strided_iterator;
     template <class, ptrdiff_t, size_t> friend struct data_v1::strided_array;
 

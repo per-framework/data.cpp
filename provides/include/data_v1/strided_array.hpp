@@ -15,7 +15,7 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(Value *begin,
     assert(Stride == stride);
 
   (void)size;
-  if constexpr (Size == dynamic_size)
+  if constexpr (Size == dynamic_extent)
     this->m_size = size;
   else
     assert(Size == size);
@@ -35,7 +35,7 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(
   if constexpr (Stride == dynamic_stride)
     this->m_stride = sizeof(Value);
 
-  if constexpr (Size == dynamic_size)
+  if constexpr (Size == dynamic_extent)
     this->m_size = ThatSize;
   else
     static_assert(Size == ThatSize);
@@ -52,7 +52,7 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(
   else
     static_assert(Stride == ThatStride);
 
-  if constexpr (Size == dynamic_size)
+  if constexpr (Size == dynamic_extent)
     this->m_size = that.size();
   else
     static_assert(Size == ThatSize);
@@ -60,7 +60,7 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(
 
 template <class Value, ptrdiff_t Stride, size_t Size>
 auto data_v1::strided_array<Value, Stride, Size>::size() const {
-  if constexpr (Size == dynamic_size)
+  if constexpr (Size == dynamic_extent)
     return this->m_size;
   else
     return Size;
@@ -131,7 +131,7 @@ auto data_v1::make_strided_array(Value (&array)[N]) {
 
 template <class Value>
 auto data_v1::make_strided_array(Value *begin, Value *end) {
-  return strided_array<Value, sizeof(Value), dynamic_size>(begin, end);
+  return strided_array<Value, sizeof(Value), dynamic_extent>(begin, end);
 }
 
 template <class Value, ptrdiff_t Stride, size_t Size, class Member>
