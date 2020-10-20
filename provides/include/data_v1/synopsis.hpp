@@ -63,7 +63,7 @@ template <class Value,
           ptrdiff_t Stride = dynamic_stride,
           size_t Size = dynamic_extent>
 struct strided_array : Private::strided_array<Value, Stride, Size> {
-  using value_type = Value;
+  using element_type = Value;
   using iterator_type = strided_iterator<Value>;
 
   strided_array(Value *begin, ptrdiff_t stride, size_t count);
