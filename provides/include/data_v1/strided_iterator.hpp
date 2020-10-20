@@ -5,21 +5,21 @@
 #include <cassert>
 
 template <class Value, ptrdiff_t Stride>
-data_v1::strided_iterator<Value, Stride>::strided_iterator(Value *begin,
-                                                           ptrdiff_t stride) {
-  this->m_pointer = begin;
+data_v1::strided_iterator<Value, Stride>::strided_iterator(Value *pointer,
+                                                           ptrdiff_t step) {
+  this->m_pointer = pointer;
 
-  (void)stride;
+  (void)step;
   if constexpr (Stride == dynamic_stride)
-    this->m_stride = stride;
+    this->m_step = step;
   else
-    assert(Stride == stride);
+    assert(Stride == step);
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::strided_iterator<Value, Stride>::stride() const {
+auto data_v1::strided_iterator<Value, Stride>::step() const {
   if constexpr (Stride == dynamic_stride)
-    return this->m_stride;
+    return this->m_step;
   else
     return Stride;
 }
@@ -34,18 +34,18 @@ auto data_v1::strided_iterator<Value, Stride>::equals(
     const strided_iterator<Value, Stride> &lhs,
     const strided_iterator<Value, Stride> &rhs) {
   if constexpr (Stride != dynamic_stride)
-    assert(lhs.m_stride == rhs.m_stride);
+    assert(lhs.m_step == rhs.m_step);
   return lhs.m_pointer == rhs.m_pointer;
 }
 
 template <class Value, ptrdiff_t Stride>
 auto data_v1::strided_iterator<Value, Stride>::increment() {
-  this->m_pointer = (Value *)((char *)(this->m_pointer) + stride());
+  this->m_pointer = (Value *)((char *)(this->m_pointer) + step());
 }
 
 template <class Value, ptrdiff_t Stride>
 auto data_v1::strided_iterator<Value, Stride>::decrement() {
-  this->m_pointer = (Value *)((char *)(this->m_pointer) - stride());
+  this->m_pointer = (Value *)((char *)(this->m_pointer) - step());
 }
 
 template <class Value, ptrdiff_t Stride>

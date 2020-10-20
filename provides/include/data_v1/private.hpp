@@ -25,16 +25,16 @@ class Private {
     Value *m_pointer;
   };
 
-  template <ptrdiff_t Stride, class Base> class stride_member : Base {
+  template <ptrdiff_t Stride, class Base> class step_member : Base {
     template <class, ptrdiff_t> friend struct data_v1::strided_iterator;
     template <class, ptrdiff_t, size_t> friend struct data_v1::strided_array;
   };
 
-  template <class Base> class stride_member<dynamic_stride, Base> : Base {
+  template <class Base> class step_member<dynamic_stride, Base> : Base {
     template <class, ptrdiff_t> friend struct data_v1::strided_iterator;
     template <class, ptrdiff_t, size_t> friend struct data_v1::strided_array;
 
-    ptrdiff_t m_stride;
+    ptrdiff_t m_step;
   };
 
   template <size_t Size, class Base> class size_member : Base {
@@ -50,11 +50,11 @@ class Private {
   };
 
   template <class Value, ptrdiff_t Stride>
-  using strided_iterator = stride_member<Stride, pointer_member<Value>>;
+  using strided_iterator = step_member<Stride, pointer_member<Value>>;
 
   template <class Value, ptrdiff_t Stride, size_t Size>
   using strided_array =
-      size_member<Size, stride_member<Stride, pointer_member<Value>>>;
+      size_member<Size, step_member<Stride, pointer_member<Value>>>;
 };
 
 } // namespace data_v1

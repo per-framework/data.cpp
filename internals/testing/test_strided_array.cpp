@@ -19,7 +19,7 @@ auto test_strided_array = test([]() {
       {{1, 2.0f}, false}, {{3, 4.0f}, true}, {{5, 6.0f}, false}};
 
   strided_array<foo> foos = foo_deriveds;
-  verify(foos.stride() == sizeof(foo_derived));
+  verify(foos.step() == sizeof(foo_derived));
 
   auto bazes =
       reversed(focused_on(&foo::baz, make_strided_array(foo_deriveds)));
@@ -27,7 +27,7 @@ auto test_strided_array = test([]() {
   static_assert(sizeof(bazes) == sizeof(void *));
 
   verify(bazes.size() == 3);
-  verify(bazes.stride() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
+  verify(bazes.step() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
 
   verify(bazes[0] == 6.0f);
   verify(bazes[1] == 4.0f);
@@ -44,7 +44,7 @@ auto test_strided_array = test([]() {
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
 
   verify(dynamic.size() == 3);
-  verify(dynamic.stride() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
+  verify(dynamic.step() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
 
   verify(dynamic[0] == 6.0f);
   verify(dynamic[1] == 4.0f);
@@ -61,8 +61,7 @@ auto test_strided_array = test([]() {
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
 
   verify(const_dynamic.size() == 3);
-  verify(const_dynamic.stride() ==
-         -static_cast<ptrdiff_t>(sizeof(foo_derived)));
+  verify(const_dynamic.step() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
 
   verify(const_dynamic[0] == 6.0f);
   verify(const_dynamic[1] == 4.0f);
