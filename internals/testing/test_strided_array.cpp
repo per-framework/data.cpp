@@ -21,7 +21,8 @@ auto test_strided_array = test([]() {
   strided_array<foo> foos = foo_deriveds;
   verify(foos.stride() == sizeof(foo_derived));
 
-  auto bazes = reversed(focus_on(&foo::baz, make_strided_array(foo_deriveds)));
+  auto bazes =
+      reversed(focused_on(&foo::baz, make_strided_array(foo_deriveds)));
 
   static_assert(sizeof(bazes) == sizeof(void *));
 

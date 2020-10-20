@@ -103,8 +103,8 @@ template <class Value,
           size_t Size,
           class Struct,
           class Member>
-auto focus_on(Member(Struct::*member),
-              const strided_array<Value, Stride, Size> &array);
+auto focused_on(Member(Struct::*member),
+                const strided_array<Value, Stride, Size> &array);
 
 template <class Value, ptrdiff_t Stride, size_t Size>
 auto reversed(const strided_array<Value, Stride, Size> &array);

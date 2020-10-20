@@ -139,8 +139,8 @@ template <class Value,
           size_t Size,
           class Struct,
           class Member>
-auto data_v1::focus_on(Member(Struct::*member),
-                       const strided_array<Value, Stride, Size> &array) {
+auto data_v1::focused_on(Member(Struct::*member),
+                         const strided_array<Value, Stride, Size> &array) {
   return strided_array<Member, Stride, Size>(
       &(array[0].*member), array.stride(), array.size());
 }
