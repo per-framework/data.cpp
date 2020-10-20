@@ -68,12 +68,13 @@ struct strided_array : Private::strided_array<Value, Stride, Size> {
 
   strided_array(Value *begin, ptrdiff_t stride, size_t count);
 
-  strided_array(Value *begin, Value *end);
+  template <class ThatValue> strided_array(ThatValue *begin, ThatValue *end);
 
-  template <size_t ThatSize> strided_array(Value (&that)[ThatSize]);
+  template <class ThatValue, size_t ThatSize>
+  strided_array(ThatValue (&that)[ThatSize]);
 
-  template <ptrdiff_t ThatStride, size_t ThatSize>
-  strided_array(const strided_array<Value, ThatStride, ThatSize> &that);
+  template <class ThatValue, ptrdiff_t ThatStride, size_t ThatSize>
+  strided_array(const strided_array<ThatValue, ThatStride, ThatSize> &that);
 
   auto size() const;
   auto stride() const;
@@ -97,8 +98,12 @@ template <class Value, size_t N> auto make_strided_array(Value (&array)[N]);
 
 template <class Value> auto make_strided_array(Value *begin, Value *end);
 
-template <class Value, ptrdiff_t Stride, size_t Size, class Member>
-auto focus_on(Member(Value::*member),
+template <class Value,
+          ptrdiff_t Stride,
+          size_t Size,
+          class Struct,
+          class Member>
+auto focus_on(Member(Struct::*member),
               const strided_array<Value, Stride, Size> &array);
 
 template <class Value, ptrdiff_t Stride, size_t Size>

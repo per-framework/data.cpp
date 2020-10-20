@@ -7,7 +7,7 @@
 template <class Value, ptrdiff_t Stride>
 data_v1::strided_iterator<Value, Stride>::strided_iterator(Value *begin,
                                                            ptrdiff_t stride) {
-  this->m_pointer = (void *)begin;
+  this->m_pointer = begin;
 
   (void)stride;
   if constexpr (Stride == dynamic_stride)
@@ -26,7 +26,7 @@ auto data_v1::strided_iterator<Value, Stride>::stride() const {
 
 template <class Value, ptrdiff_t Stride>
 auto &data_v1::strided_iterator<Value, Stride>::operator*() const {
-  return *(Value *)(this->m_pointer);
+  return *(this->m_pointer);
 }
 
 template <class Value, ptrdiff_t Stride>
@@ -40,12 +40,12 @@ auto data_v1::strided_iterator<Value, Stride>::equals(
 
 template <class Value, ptrdiff_t Stride>
 auto data_v1::strided_iterator<Value, Stride>::increment() {
-  this->m_pointer = (void *)((char *)(this->m_pointer) + stride());
+  this->m_pointer = (Value *)((char *)(this->m_pointer) + stride());
 }
 
 template <class Value, ptrdiff_t Stride>
 auto data_v1::strided_iterator<Value, Stride>::decrement() {
-  this->m_pointer = (void *)((char *)(this->m_pointer) - stride());
+  this->m_pointer = (Value *)((char *)(this->m_pointer) - stride());
 }
 
 template <class Value, ptrdiff_t Stride>

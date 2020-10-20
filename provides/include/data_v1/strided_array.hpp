@@ -6,7 +6,7 @@ template <class Value, ptrdiff_t Stride, size_t Size>
 data_v1::strided_array<Value, Stride, Size>::strided_array(Value *begin,
                                                            ptrdiff_t stride,
                                                            size_t size) {
-  this->m_pointer = (void *)begin;
+  this->m_pointer = begin;
 
   (void)stride;
   if constexpr (Stride == dynamic_stride)
@@ -22,18 +22,21 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(Value *begin,
 }
 
 template <class Value, ptrdiff_t Stride, size_t Size>
-data_v1::strided_array<Value, Stride, Size>::strided_array(Value *begin,
-                                                           Value *end)
-    : strided_array(begin, sizeof(Value), end - begin) {}
+template <class ThatValue>
+data_v1::strided_array<Value, Stride, Size>::strided_array(ThatValue *begin,
+                                                           ThatValue *end)
+    : strided_array(begin, sizeof(ThatValue), end - begin) {}
 
 template <class Value, ptrdiff_t Stride, size_t Size>
-template <size_t ThatSize>
+template <class ThatValue, size_t ThatSize>
 data_v1::strided_array<Value, Stride, Size>::strided_array(
-    Value (&that)[ThatSize]) {
-  this->m_pointer = (void *)that;
+    ThatValue (&that)[ThatSize]) {
+  this->m_pointer = that;
 
   if constexpr (Stride == dynamic_stride)
-    this->m_stride = sizeof(Value);
+    this->m_stride = sizeof(ThatValue);
+  else
+    static_assert(Stride == sizeof(ThatValue));
 
   if constexpr (Size == dynamic_extent)
     this->m_size = ThatSize;
@@ -42,9 +45,9 @@ data_v1::strided_array<Value, Stride, Size>::strided_array(
 }
 
 template <class Value, ptrdiff_t Stride, size_t Size>
-template <ptrdiff_t ThatStride, size_t ThatSize>
+template <class ThatValue, ptrdiff_t ThatStride, size_t ThatSize>
 data_v1::strided_array<Value, Stride, Size>::strided_array(
-    const strided_array<Value, ThatStride, ThatSize> &that) {
+    const strided_array<ThatValue, ThatStride, ThatSize> &that) {
   this->m_pointer = that.m_pointer;
 
   if constexpr (Stride == dynamic_stride)
@@ -92,26 +95,23 @@ auto data_v1::strided_array<Value, Stride, Size>::end() const {
 
 template <class Value, ptrdiff_t Stride, size_t Size>
 auto data_v1::strided_array<Value, Stride, Size>::rbegin() const {
+  auto pointer =
+      (Value *)((char *)(this->m_pointer) - stride() + size() * stride());
   if constexpr (Stride == dynamic_stride)
-    return strided_iterator<Value, Stride>(
-        (Value *)((char *)(this->m_pointer) - stride() + size() * stride()),
-        -stride());
+    return strided_iterator<Value, Stride>(pointer, -stride());
   else
-    return strided_iterator<Value, -Stride>(
-        (Value *)((char *)(this->m_pointer) - stride() + size() * stride()),
-        -stride());
+    return strided_iterator<Value, -Stride>(pointer, -stride());
 }
 
 template <class Value, ptrdiff_t Stride, size_t Size>
 auto data_v1::strided_array<Value, Stride, Size>::rend() const {
   // WARNING: The following computes a pointer that potentially points outside
   // of the underlying array.
+  auto pointer = (Value *)((char *)(this->m_pointer) - stride());
   if constexpr (Stride == dynamic_stride)
-    return strided_iterator<Value, Stride>(
-        (Value *)((char *)(this->m_pointer) - stride()), -stride());
+    return strided_iterator<Value, Stride>(pointer, -stride());
   else
-    return strided_iterator<Value, -Stride>(
-        (Value *)((char *)(this->m_pointer) - stride()), -stride());
+    return strided_iterator<Value, -Stride>(pointer, -stride());
 }
 
 template <class Value, ptrdiff_t Stride, size_t Size>
@@ -134,8 +134,12 @@ auto data_v1::make_strided_array(Value *begin, Value *end) {
   return strided_array<Value, sizeof(Value), dynamic_extent>(begin, end);
 }
 
-template <class Value, ptrdiff_t Stride, size_t Size, class Member>
-auto data_v1::focus_on(Member(Value::*member),
+template <class Value,
+          ptrdiff_t Stride,
+          size_t Size,
+          class Struct,
+          class Member>
+auto data_v1::focus_on(Member(Struct::*member),
                        const strided_array<Value, Stride, Size> &array) {
   return strided_array<Member, Stride, Size>(
       &(array[0].*member), array.stride(), array.size());
