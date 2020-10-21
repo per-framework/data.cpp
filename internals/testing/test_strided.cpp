@@ -37,6 +37,18 @@ auto test_strided = test([]() {
   verify(*bazes.rbegin() == 2.0f);
   verify(*--bazes.end() == 2.0f);
 
+  {
+    auto begin = bazes.begin();
+    verify(begin++ == bazes.begin());
+    verify(begin != bazes.begin());
+
+    auto rend = bazes.rend();
+    verify(bazes.rend() == rend--);
+    verify(bazes.rend() != rend);
+  }
+  verify(bazes.begin() != bazes.end());
+  verify(++++bazes.begin() == --bazes.end());
+
   strided<float> dynamic = bazes;
 
   static_assert(sizeof(reversed(dynamic)) ==
@@ -54,6 +66,18 @@ auto test_strided = test([]() {
   verify(*dynamic.rbegin() == 2.0f);
   verify(*--dynamic.end() == 2.0f);
 
+  {
+    auto begin = dynamic.begin();
+    verify(begin++ == dynamic.begin());
+    verify(begin != dynamic.begin());
+
+    auto rend = dynamic.rend();
+    verify(dynamic.rend() == rend--);
+    verify(dynamic.rend() != rend);
+  }
+  verify(dynamic.begin() != dynamic.end());
+  verify(++dynamic.begin() == ----dynamic.end());
+
   strided<const float> const_dynamic = bazes;
 
   static_assert(sizeof(reversed(const_dynamic)) ==
@@ -70,4 +94,16 @@ auto test_strided = test([]() {
   verify(*--const_dynamic.rend() == 6.0f);
   verify(*const_dynamic.rbegin() == 2.0f);
   verify(*--const_dynamic.end() == 2.0f);
+
+  {
+    auto begin = const_dynamic.begin();
+    verify(begin++ == const_dynamic.begin());
+    verify(begin++ != const_dynamic.begin());
+
+    auto rend = const_dynamic.rend();
+    verify(const_dynamic.rend() == rend--);
+    verify(const_dynamic.rend() != rend);
+  }
+  verify(const_dynamic.begin() != const_dynamic.end());
+  verify(++const_dynamic.begin() == ----const_dynamic.end());
 });

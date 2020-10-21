@@ -33,7 +33,7 @@ template <class Value, ptrdiff_t Stride>
 auto data_v1::strided_iterator<Value, Stride>::equals(
     const strided_iterator<Value, Stride> &lhs,
     const strided_iterator<Value, Stride> &rhs) {
-  if constexpr (Stride != dynamic_stride)
+  if constexpr (Stride == dynamic_stride)
     assert(lhs.m_step == rhs.m_step);
   return lhs.m_pointer == rhs.m_pointer;
 }
