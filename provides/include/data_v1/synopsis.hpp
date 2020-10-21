@@ -1,7 +1,5 @@
 #pragma once
 
-#include <limits>
-
 #include "data_v1/private.hpp"
 
 namespace data_v1 {
@@ -53,29 +51,47 @@ struct strided_iterator : Private::strided_iterator<Value, Stride> {
   auto decrement();
 };
 
+/// Compares `lhs` and `rhs` for equality.  Both iterators must originate from
+/// the same strided array.
 template <class Value, ptrdiff_t Stride>
 auto operator==(const strided_iterator<Value, Stride> &lhs,
                 const strided_iterator<Value, Stride> &rhs);
 
+/// Compares `lhs` and `rhs` for inequality.  Both iterators must originate from
+/// the same strided array.
 template <class Value, ptrdiff_t Stride>
 auto operator!=(const strided_iterator<Value, Stride> &lhs,
                 const strided_iterator<Value, Stride> &rhs);
 
+/// Moves to next element.  The result is undefined in case the iterator
+/// points to beyond the last element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto &operator++(strided_iterator<Value, Stride> &i);
 
+/// Moves to next element.  The result is undefined in case the iterator
+/// points to beyond the last element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto &&operator++(strided_iterator<Value, Stride> &&i);
 
+/// Moves to next element and returns a copy of the given iterator before
+/// moving.  The result is undefined in case the iterator points to beyond the
+/// last element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto operator++(strided_iterator<Value, Stride> &i, int);
 
+/// Moves to previous element.  The result is undefined in case the iterator
+/// points to the first element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto &operator--(strided_iterator<Value, Stride> &i);
 
+/// Moves to previous element.  The result is undefined in case the iterator
+/// points to the first element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto &&operator--(strided_iterator<Value, Stride> &&i);
 
+/// Moves to previous element and returns a copy of the given iterator before
+/// moving.  The result is undefined in case the iterator points to the first
+/// element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto operator--(strided_iterator<Value, Stride> &i, int);
 
