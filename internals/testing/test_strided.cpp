@@ -23,7 +23,7 @@ auto test_strided = test([]() {
 
   auto bazes = reversed(focused_on(&foo::baz, make_strided(foo_deriveds)));
 
-  static_assert(sizeof(bazes) == sizeof(void *));
+  static_assert(sizeof(bazes) <= sizeof(void *));
 
   verify(bazes.size() == 3);
   verify(bazes.step() == -static_cast<ptrdiff_t>(sizeof(foo_derived)));
@@ -51,7 +51,7 @@ auto test_strided = test([]() {
 
   strided<float> dynamic = bazes;
 
-  static_assert(sizeof(reversed(dynamic)) ==
+  static_assert(sizeof(reversed(dynamic)) <=
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
 
   verify(dynamic.size() == 3);
@@ -80,7 +80,7 @@ auto test_strided = test([]() {
 
   strided<const float> const_dynamic = bazes;
 
-  static_assert(sizeof(reversed(const_dynamic)) ==
+  static_assert(sizeof(reversed(const_dynamic)) <=
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
 
   verify(const_dynamic.size() == 3);
@@ -106,4 +106,23 @@ auto test_strided = test([]() {
   }
   verify(const_dynamic.begin() != const_dynamic.end());
   verify(++const_dynamic.begin() == ----const_dynamic.end());
+});
+
+auto test_from_array = test([]() {
+  struct base {
+    int an_int;
+  };
+  struct derived : base {
+    float a_float;
+  };
+  std::array<derived, 2> array{{{{1}, 2.0f}, {{3}, 4.0f}}};
+
+  auto static_strided =
+      focused_on(&base::an_int, reversed(make_strided(array)));
+  verify(sizeof(static_strided) <= sizeof(void *));
+  verify(static_strided.size() == 2);
+  verify(static_strided.back() == 1);
+
+  strided<base> dynamic_strided = array;
+  verify(dynamic_strided.step() == -static_strided.step());
 });

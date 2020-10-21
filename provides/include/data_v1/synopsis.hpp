@@ -2,6 +2,8 @@
 
 #include "data_v1/private.hpp"
 
+#include <array>
+
 namespace data_v1 {
 
 // array.hpp ===================================================================
@@ -133,6 +135,10 @@ struct strided : Private::strided<Value, Stride, Extent> {
   template <class ThatValue, ptrdiff_t ThatStride, size_t ThatExtent>
   strided(const strided<ThatValue, ThatStride, ThatExtent> &that);
 
+  /// Constructs a strided array from a given `std::array`.
+  template <class ThatValue, size_t ThatExtent>
+  strided(std::array<ThatValue, ThatExtent> &array);
+
   /// Checks if the sequence is empty.
   auto empty() const;
 
@@ -178,6 +184,10 @@ template <class Value, size_t N> auto make_strided(Value (&array)[N]);
 
 /// Constructs a strided array from two raw pointers.
 template <class Value> auto make_strided(Value *begin, Value *end);
+
+/// Constructs a strided array from a `std::array`.
+template <class Value, size_t Extent>
+auto make_strided(std::array<Value, Extent> &array);
 
 /// View of members of the given strided array of structures.
 template <class SubtypeOfStruct,

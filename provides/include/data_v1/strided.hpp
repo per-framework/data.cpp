@@ -62,6 +62,26 @@ data_v1::strided<Value, Stride, Extent>::strided(
 }
 
 template <class Value, ptrdiff_t Stride, size_t Extent>
+template <class ThatValue, size_t ThatExtent>
+data_v1::strided<Value, Stride, Extent>::strided(
+    std::array<ThatValue, ThatExtent> &array) {
+  if constexpr (ThatExtent == 0)
+    this->m_pointer = nullptr;
+  else
+    this->m_pointer = &array.front();
+
+  if constexpr (Stride == dynamic_stride)
+    this->m_step = sizeof(ThatValue);
+  else
+    static_assert(Stride == sizeof(ThatValue));
+
+  if constexpr (Extent == dynamic_extent)
+    this->m_size = ThatExtent;
+  else
+    static_assert(Extent == ThatExtent);
+}
+
+template <class Value, ptrdiff_t Stride, size_t Extent>
 auto data_v1::strided<Value, Stride, Extent>::empty() const {
   return !size();
 }
@@ -138,6 +158,11 @@ template <class Value, size_t N> auto data_v1::make_strided(Value (&array)[N]) {
 
 template <class Value> auto data_v1::make_strided(Value *begin, Value *end) {
   return strided<Value, sizeof(Value), dynamic_extent>(begin, end);
+}
+
+template <class Value, size_t Extent>
+auto data_v1::make_strided(std::array<Value, Extent> &array) {
+  return strided<Value, sizeof(Value), Extent>(array);
 }
 
 template <class SubtypeOfStruct,
