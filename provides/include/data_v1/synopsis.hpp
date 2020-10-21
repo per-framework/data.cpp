@@ -17,6 +17,12 @@ template <class Value, size_t N> auto begin(Value (&array)[N]);
 /// Returns a pointer (or iterator) to the end of the array.
 template <class Value, size_t N> auto end(Value (&array)[N]);
 
+/// Returns a reference to the first element of the array.
+template <class Value, size_t N> auto &front(Value (&array)[N]);
+
+/// Returns a reference to the last element of the array.
+template <class Value, size_t N> auto &back(Value (&array)[N]);
+
 // strided_iterator.hpp ========================================================
 
 /// `strided_iterator<Value, Stride> is the iterator type of `strided<Value,
