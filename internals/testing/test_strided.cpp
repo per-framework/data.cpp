@@ -1,11 +1,11 @@
-#include "data_v1/strided_array.hpp"
+#include "data_v1/strided.hpp"
 
 #include "testing_v1/test.hpp"
 
 using namespace testing_v1;
 using namespace data_v1;
 
-auto test_strided_array = test([]() {
+auto test_strided = test([]() {
   struct foo {
     int bar;
     float baz;
@@ -18,11 +18,10 @@ auto test_strided_array = test([]() {
   foo_derived foo_deriveds[] = {
       {{1, 2.0f}, false}, {{3, 4.0f}, true}, {{5, 6.0f}, false}};
 
-  strided_array<foo> foos = foo_deriveds;
+  strided<foo> foos = foo_deriveds;
   verify(foos.step() == sizeof(foo_derived));
 
-  auto bazes =
-      reversed(focused_on(&foo::baz, make_strided_array(foo_deriveds)));
+  auto bazes = reversed(focused_on(&foo::baz, make_strided(foo_deriveds)));
 
   static_assert(sizeof(bazes) == sizeof(void *));
 
@@ -38,7 +37,7 @@ auto test_strided_array = test([]() {
   verify(*bazes.rbegin() == 2.0f);
   verify(*--bazes.end() == 2.0f);
 
-  strided_array<float> dynamic = bazes;
+  strided<float> dynamic = bazes;
 
   static_assert(sizeof(reversed(dynamic)) ==
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
@@ -55,7 +54,7 @@ auto test_strided_array = test([]() {
   verify(*dynamic.rbegin() == 2.0f);
   verify(*--dynamic.end() == 2.0f);
 
-  strided_array<const float> const_dynamic = bazes;
+  strided<const float> const_dynamic = bazes;
 
   static_assert(sizeof(reversed(const_dynamic)) ==
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));

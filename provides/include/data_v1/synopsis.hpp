@@ -17,9 +17,9 @@ template <class Value, size_t N> auto end(Value (&array)[N]);
 
 // strided_iterator.hpp ========================================================
 
-/// `strided_iterator<Value, Stride> is the iterator type of
-/// `strided_array<Value, Stride, *>`.  The stride in bytes between elements
-/// can be given either statically or dynamically.
+/// `strided_iterator<Value, Stride> is the iterator type of `strided<Value,
+/// Stride, *>`.  The stride in bytes between elements can be given either
+/// statically or dynamically.
 template <class Value, ptrdiff_t Stride = dynamic_stride>
 struct strided_iterator : Private::strided_iterator<Value, Stride> {
   using value_type = Value;
@@ -74,7 +74,7 @@ template <class Value, ptrdiff_t Stride>
 auto &&operator++(strided_iterator<Value, Stride> &&i);
 
 /// Moves to next element and returns a copy of the given iterator before
-/// moving.  The result is undefined in case the iterator points to beyond the
+/// moving.  The effect is undefined in case the iterator points to beyond the
 /// last element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto operator++(strided_iterator<Value, Stride> &i, int);
@@ -90,23 +90,23 @@ template <class Value, ptrdiff_t Stride>
 auto &&operator--(strided_iterator<Value, Stride> &&i);
 
 /// Moves to previous element and returns a copy of the given iterator before
-/// moving.  The result is undefined in case the iterator points to the first
+/// moving.  The effect is undefined in case the iterator points to the first
 /// element of the underlying sequence.
 template <class Value, ptrdiff_t Stride>
 auto operator--(strided_iterator<Value, Stride> &i, int);
 
-// strided_array.hpp ===========================================================
+// strided.hpp =================================================================
 
-/// A `strided_array<Value, Stride, Extent>` is basically a generalization of
-/// both `std::span<Value, Extent>` and `std::array<Value, Extent>` and is a
-/// view of or a reference to a subsequence of elements of an array.  Both the
-/// stride in bytes between elements and the extent or number of elements can be
-/// given either statically or dynamically.  In case the stride is given
-/// statically, and is `sizeof(Value)`, then the array is contiguous.
+/// A `strided<Value, Stride, Extent>` is basically a generalization of both
+/// `std::span<Value, Extent>` and `std::array<Value, Extent>` and is a view of
+/// or a reference to a subsequence of elements of an array.  Both the stride in
+/// bytes between elements and the extent or number of elements can be given
+/// either statically or dynamically.  In case the stride is given statically,
+/// and is `sizeof(Value)`, then the array is contiguous.
 template <class Value,
           ptrdiff_t Stride = dynamic_stride,
           size_t Extent = dynamic_extent>
-struct strided_array : Private::strided_array<Value, Stride, Extent> {
+struct strided : Private::strided<Value, Stride, Extent> {
   using element_type = Value;
   using iterator_type = strided_iterator<Value, Stride>;
 
@@ -120,18 +120,18 @@ struct strided_array : Private::strided_array<Value, Stride, Extent> {
 
   /// Constructs a strided array from a raw pointer, stride in bytes, and number
   /// of elements.
-  strided_array(Value *begin, ptrdiff_t step, size_t size);
+  strided(Value *begin, ptrdiff_t step, size_t size);
 
   /// Constructs a strided array from two raw pointers.
-  template <class ThatValue> strided_array(ThatValue *begin, ThatValue *end);
+  template <class ThatValue> strided(ThatValue *begin, ThatValue *end);
 
   /// Constructs a strided array from specified array.
   template <class ThatValue, size_t ThatExtent>
-  strided_array(ThatValue (&that)[ThatExtent]);
+  strided(ThatValue (&that)[ThatExtent]);
 
   /// Constructs a strided array from given strided array (of different type).
   template <class ThatValue, ptrdiff_t ThatStride, size_t ThatExtent>
-  strided_array(const strided_array<ThatValue, ThatStride, ThatExtent> &that);
+  strided(const strided<ThatValue, ThatStride, ThatExtent> &that);
 
   /// Checks if the sequence is empty.
   auto empty() const;
@@ -171,26 +171,26 @@ struct strided_array : Private::strided_array<Value, Stride, Extent> {
 /// Type alias for a strided array whose elements are statically known to be
 /// stored contiguously.
 template <class Value, size_t Extent = dynamic_extent>
-using contiguous_array = strided_array<Value, sizeof(Value), Extent>;
+using contiguous = strided<Value, sizeof(Value), Extent>;
 
 /// Constructs a strided array from specified array.
-template <class Value, size_t N> auto make_strided_array(Value (&array)[N]);
+template <class Value, size_t N> auto make_strided(Value (&array)[N]);
 
 /// Constructs a strided array from two raw pointers.
-template <class Value> auto make_strided_array(Value *begin, Value *end);
+template <class Value> auto make_strided(Value *begin, Value *end);
 
 /// View of members of the given strided array of structures.
-template <class Value,
+template <class SubtypeOfStruct,
           ptrdiff_t Stride,
           size_t Extent,
           class Struct,
-          class Member>
-auto focused_on(Member(Struct::*member),
-                const strided_array<Value, Stride, Extent> &array);
+          class Value>
+auto focused_on(Value(Struct::*member),
+                const strided<SubtypeOfStruct, Stride, Extent> &array);
 
 /// Reversed view of the given strided array.
 template <class Value, ptrdiff_t Stride, size_t Extent>
-auto reversed(const strided_array<Value, Stride, Extent> &array);
+auto reversed(const strided<Value, Stride, Extent> &array);
 
 // struct.hpp ==================================================================
 

@@ -3,3 +3,9 @@
 C++ data structures.
 
 See [`synopsis.hpp`](provides/include/data_v1/synopsis.hpp) for the API.
+
+## TODO
+
+- Add random access operations to `strided_iterator`
+- Add `repeat`, `subspan`, `every_nth` for `strided`
+- Consider making `strided` convertible to/from `std::span` when appropriate
