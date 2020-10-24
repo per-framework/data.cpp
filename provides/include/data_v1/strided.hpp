@@ -152,12 +152,17 @@ auto &data_v1::strided<Value, Stride, Extent>::back() const {
   return operator[](size() - 1);
 }
 
-template <class Value, size_t N> auto data_v1::make_strided(Value (&array)[N]) {
-  return strided<Value, sizeof(Value), N>(array);
+template <class Value>
+auto data_v1::make_strided(Value *begin, ptrdiff_t step, size_t size) {
+  return strided<Value>(begin, step, size);
 }
 
 template <class Value> auto data_v1::make_strided(Value *begin, Value *end) {
   return strided<Value, sizeof(Value), dynamic_extent>(begin, end);
+}
+
+template <class Value, size_t N> auto data_v1::make_strided(Value (&array)[N]) {
+  return strided<Value, sizeof(Value), N>(array);
 }
 
 template <class Value, size_t Extent>

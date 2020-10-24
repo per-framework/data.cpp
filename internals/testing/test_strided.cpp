@@ -1,3 +1,4 @@
+#include "data_v1/array.hpp"
 #include "data_v1/strided.hpp"
 
 #include "testing_v1/test.hpp"
@@ -20,6 +21,11 @@ auto test_strided = test([]() {
 
   strided<foo> foos = foo_deriveds;
   verify(foos.step() == sizeof(foo_derived));
+
+  strided<foo> also_foos =
+      make_strided(foo_deriveds, sizeof(foo_deriveds[0]), size(foo_deriveds));
+  verify(foos.begin() == also_foos.begin());
+  verify(foos.end() == also_foos.end());
 
   auto bazes = reversed(focused_on(&foo::baz, make_strided(foo_deriveds)));
 
@@ -125,5 +131,5 @@ auto test_from_array = test([]() {
   verify(static_strided.back() == 1);
 
   strided<base> dynamic_strided = array;
-  verify(dynamic_strided.step() == -static_strided.step());
+  verify(reversed(dynamic_strided).step() == static_strided.step());
 });

@@ -197,11 +197,16 @@ struct strided : Private::strided<Value, Stride, Extent> {
 template <class Value, size_t Extent = dynamic_extent>
 using contiguous = strided<Value, sizeof(Value), Extent>;
 
-/// Constructs a strided array from specified array.
-template <class Value, size_t N> auto make_strided(Value (&array)[N]);
+/// Constructs a strided array from a raw pointer, stride in bytes, and number
+/// of elements.
+template <class Value>
+auto make_strided(Value *begin, ptrdiff_t step, size_t size);
 
 /// Constructs a strided array from two raw pointers.
 template <class Value> auto make_strided(Value *begin, Value *end);
+
+/// Constructs a strided array from specified array.
+template <class Value, size_t N> auto make_strided(Value (&array)[N]);
 
 /// Constructs a strided array from a `std::array`.
 template <class Value, size_t Extent>
