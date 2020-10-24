@@ -121,6 +121,7 @@ auto test_from_array = test([]() {
       focused_on(&base::an_int, reversed(make_strided(array)));
   verify(sizeof(static_strided) <= sizeof(void *));
   verify(static_strided.size() == 2);
+  verify(static_strided.front() == 3);
   verify(static_strided.back() == 1);
 
   strided<base> dynamic_strided = array;
