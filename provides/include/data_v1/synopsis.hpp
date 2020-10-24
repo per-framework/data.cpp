@@ -9,19 +9,31 @@ namespace data_v1 {
 // array.hpp ===================================================================
 
 /// Returns the number of elements in the given array.
-template <class Value, size_t N> constexpr auto size(Value (&array)[N]);
+template <class Value, size_t N> constexpr auto size(const Value (&array)[N]);
 
 /// Returns a pointer (or iterator) to the beginning of the array.
 template <class Value, size_t N> auto begin(Value (&array)[N]);
 
+/// Returns a pointer (or iterator) to the beginning of the array.
+template <class Value, size_t N> auto begin(const Value (&array)[N]);
+
 /// Returns a pointer (or iterator) to the end of the array.
 template <class Value, size_t N> auto end(Value (&array)[N]);
+
+/// Returns a pointer (or iterator) to the end of the array.
+template <class Value, size_t N> auto end(const Value (&array)[N]);
 
 /// Returns a reference to the first element of the array.
 template <class Value, size_t N> auto &front(Value (&array)[N]);
 
+/// Returns a reference to the first element of the array.
+template <class Value, size_t N> const auto &front(const Value (&array)[N]);
+
 /// Returns a reference to the last element of the array.
 template <class Value, size_t N> auto &back(Value (&array)[N]);
+
+/// Returns a reference to the last element of the array.
+template <class Value, size_t N> const auto &back(const Value (&array)[N]);
 
 // strided_iterator.hpp ========================================================
 

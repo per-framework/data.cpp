@@ -5,8 +5,8 @@
 using namespace testing_v1;
 using namespace data_v1;
 
-auto test_array = test([]() {
-  int an_array[] = {3, 1, 4};
+template <class T> void test_array() {
+  T an_array[] = {3, 1, 4};
 
   verify(size(an_array) == 3);
 
@@ -15,4 +15,7 @@ auto test_array = test([]() {
 
   verify(front(an_array) == 3);
   verify(back(an_array) == 4);
-});
+}
+
+auto test_mutable_array = test(test_array<int>);
+auto test_const_array = test(test_array<const int>);
