@@ -19,15 +19,15 @@ auto test_strided = test([]() {
   foo_derived foo_deriveds[] = {
       {{1, 2.0f}, false}, {{3, 4.0f}, true}, {{5, 6.0f}, false}};
 
-  strided<foo> foos = foo_deriveds;
+  strided_t<foo> foos = foo_deriveds;
   verify(foos.step() == sizeof(foo_derived));
 
-  strided<foo> also_foos =
-      make_strided(foo_deriveds, sizeof(foo_deriveds[0]), size(foo_deriveds));
+  strided_t<foo> also_foos =
+      strided(foo_deriveds, sizeof(foo_deriveds[0]), size(foo_deriveds));
   verify(foos.begin() == also_foos.begin());
   verify(foos.end() == also_foos.end());
 
-  auto bazes = reversed(focused_on(&foo::baz, make_strided(foo_deriveds)));
+  auto bazes = reversed(focused_on(&foo::baz, strided(foo_deriveds)));
 
   static_assert(sizeof(bazes) <= sizeof(void *));
 
@@ -55,7 +55,7 @@ auto test_strided = test([]() {
   verify(bazes.begin() != bazes.end());
   verify(++++bazes.begin() == --bazes.end());
 
-  strided<float> dynamic = bazes;
+  strided_t<float> dynamic = bazes;
 
   static_assert(sizeof(reversed(dynamic)) <=
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
@@ -84,7 +84,7 @@ auto test_strided = test([]() {
   verify(dynamic.begin() != dynamic.end());
   verify(++dynamic.begin() == ----dynamic.end());
 
-  strided<const float> const_dynamic = bazes;
+  strided_t<const float> const_dynamic = bazes;
 
   static_assert(sizeof(reversed(const_dynamic)) <=
                 sizeof(void *) + sizeof(ptrdiff_t) + sizeof(size_t));
@@ -123,13 +123,18 @@ auto test_from_array = test([]() {
   };
   std::array<derived, 2> array{{{{1}, 2.0f}, {{3}, 4.0f}}};
 
-  auto static_strided =
-      focused_on(&base::an_int, reversed(make_strided(array)));
+  auto static_strided = focused_on(&base::an_int, reversed(strided(array)));
   verify(sizeof(static_strided) <= sizeof(void *));
   verify(static_strided.size() == 2);
   verify(static_strided.front() == 3);
   verify(static_strided.back() == 1);
 
-  strided<base> dynamic_strided = array;
+  strided_t<base> dynamic_strided = array;
   verify(reversed(dynamic_strided).step() == static_strided.step());
+});
+
+auto test_from_initializer = test([]() {
+  auto eat_ints = [](const strided_t<const int> &) {};
+
+  eat_ints(strided<int>({3, 1, 4, 1}));
 });

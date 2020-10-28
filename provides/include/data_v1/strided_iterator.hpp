@@ -5,8 +5,8 @@
 #include <cassert>
 
 template <class Value, ptrdiff_t Stride>
-data_v1::strided_iterator<Value, Stride>::strided_iterator(Value *pointer,
-                                                           ptrdiff_t step) {
+data_v1::strided_iterator_t<Value, Stride>::strided_iterator_t(Value *pointer,
+                                                               ptrdiff_t step) {
   this->m_pointer = pointer;
 
   (void)step;
@@ -17,7 +17,7 @@ data_v1::strided_iterator<Value, Stride>::strided_iterator(Value *pointer,
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::strided_iterator<Value, Stride>::step() const {
+auto data_v1::strided_iterator_t<Value, Stride>::step() const {
   if constexpr (Stride == dynamic_stride)
     return this->m_step;
   else
@@ -25,74 +25,74 @@ auto data_v1::strided_iterator<Value, Stride>::step() const {
 }
 
 template <class Value, ptrdiff_t Stride>
-auto &data_v1::strided_iterator<Value, Stride>::operator*() const {
+auto &data_v1::strided_iterator_t<Value, Stride>::operator*() const {
   return *(this->m_pointer);
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::strided_iterator<Value, Stride>::equals(
-    const strided_iterator<Value, Stride> &lhs,
-    const strided_iterator<Value, Stride> &rhs) {
+auto data_v1::strided_iterator_t<Value, Stride>::equals(
+    const strided_iterator_t<Value, Stride> &lhs,
+    const strided_iterator_t<Value, Stride> &rhs) {
   if constexpr (Stride == dynamic_stride)
     assert(lhs.m_step == rhs.m_step);
   return lhs.m_pointer == rhs.m_pointer;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::strided_iterator<Value, Stride>::increment() {
+auto data_v1::strided_iterator_t<Value, Stride>::increment() {
   this->m_pointer = (Value *)((char *)(this->m_pointer) + step());
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::strided_iterator<Value, Stride>::decrement() {
+auto data_v1::strided_iterator_t<Value, Stride>::decrement() {
   this->m_pointer = (Value *)((char *)(this->m_pointer) - step());
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::operator==(const strided_iterator<Value, Stride> &lhs,
-                         const strided_iterator<Value, Stride> &rhs) {
-  return strided_iterator<Value, Stride>::equals(lhs, rhs);
+auto data_v1::operator==(const strided_iterator_t<Value, Stride> &lhs,
+                         const strided_iterator_t<Value, Stride> &rhs) {
+  return strided_iterator_t<Value, Stride>::equals(lhs, rhs);
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::operator!=(const strided_iterator<Value, Stride> &lhs,
-                         const strided_iterator<Value, Stride> &rhs) {
-  return !strided_iterator<Value, Stride>::equals(lhs, rhs);
+auto data_v1::operator!=(const strided_iterator_t<Value, Stride> &lhs,
+                         const strided_iterator_t<Value, Stride> &rhs) {
+  return !strided_iterator_t<Value, Stride>::equals(lhs, rhs);
 }
 
 template <class Value, ptrdiff_t Stride>
-auto &data_v1::operator++(strided_iterator<Value, Stride> &it) {
+auto &data_v1::operator++(strided_iterator_t<Value, Stride> &it) {
   it.increment();
   return it;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto &&data_v1::operator++(strided_iterator<Value, Stride> &&it) {
+auto &&data_v1::operator++(strided_iterator_t<Value, Stride> &&it) {
   it.increment();
   return it;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::operator++(strided_iterator<Value, Stride> &it, int) {
+auto data_v1::operator++(strided_iterator_t<Value, Stride> &it, int) {
   auto result = it;
   it.increment();
   return result;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto &data_v1::operator--(strided_iterator<Value, Stride> &it) {
+auto &data_v1::operator--(strided_iterator_t<Value, Stride> &it) {
   it.decrement();
   return it;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto &&data_v1::operator--(strided_iterator<Value, Stride> &&it) {
+auto &&data_v1::operator--(strided_iterator_t<Value, Stride> &&it) {
   it.decrement();
   return it;
 }
 
 template <class Value, ptrdiff_t Stride>
-auto data_v1::operator--(strided_iterator<Value, Stride> &it, int) {
+auto data_v1::operator--(strided_iterator_t<Value, Stride> &it, int) {
   auto result = it;
   it.decrement();
   return result;
